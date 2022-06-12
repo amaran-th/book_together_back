@@ -1,11 +1,13 @@
 const express = require('express')
 const app = express()
-const api = require('./routes/index')
+const testRouter = require('./routers/test')
+const signRouter = require('./routers/sign')
 const cors = require('cors')
 
 app.use(cors())
 
-app.use('/api', api)
+app.use('/test', testRouter)
+app.use('/sign', signRouter)
 
 const port = 3002
 
