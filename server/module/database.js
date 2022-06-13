@@ -38,14 +38,7 @@ module.exports = () => {
       const connection = init()
       db_open(connection)
       connection.query(sql, (error, result, fields) => {
-        if (callback) callback(error, result)
-        else {
-          if (error) {
-            console.log(error)
-          } else if (result.length == 0) {
-            res.send({ data: '유저가 없음' })
-          } else res.send({ data: result[0] })
-        }
+        callback(error, result) //콜백함수가 있을 경우 콜백함수에 result를 넣어 실행
       })
     },
   }
