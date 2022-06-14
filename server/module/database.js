@@ -33,7 +33,7 @@ module.exports = () => {
         res.send({ data: result })
       })
     },
-    getUserById: (req, res, callback = null) => {
+    getUserById: async (req, res, callback = null) => {
       const sql = `SELECT * FROM USERS WHERE userId='${req.userId}'`
       console.log(sql)
       const connection = init()
@@ -42,7 +42,7 @@ module.exports = () => {
         callback(error, result[0]) //콜백함수가 있을 경우 콜백함수에 result를 넣어 실행
       })
     },
-    addUser: (req, res, callback = null) => {
+    addUser: async (req, res, callback = null) => {
       const sql = `INSERT INTO USERS (nickName,userId,email,pwd) VALUES('${req.nickName}','${req.userId}','${req.email}','${req.pwd}');`
       //console.log(sql)
       const connection = init()
