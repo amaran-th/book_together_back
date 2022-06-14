@@ -26,15 +26,17 @@ const db_open = con => {
 module.exports = () => {
   return {
     getAllUser: (res, req) => {
-      const sql = `SELECT * FROM USERS`
+      const sql = `SELECT * FROM USERS;`
       const connection = init()
       db_open(connection)
       connection.query(sql, (error, result, fields) => {
         res.send({ data: result })
       })
     },
-    getUserById: async (req, res, callback = null) => {
-      const sql = `SELECT * FROM USERS WHERE userId='${req.userId}'`
+    getUserById: (req, res, callback = null) => {
+      const sql = `SELECT * FROM USERS WHERE userId=${mysql.escape(
+        req.userId
+      )};`
       console.log(sql)
       const connection = init()
       db_open(connection)
@@ -42,8 +44,21 @@ module.exports = () => {
         callback(error, result[0]) //콜백함수가 있을 경우 콜백함수에 result를 넣어 실행
       })
     },
-    addUser: async (req, res, callback = null) => {
-      const sql = `INSERT INTO USERS (nickName,userId,email,pwd) VALUES('${req.nickName}','${req.userId}','${req.email}','${req.pwd}');`
+    addUser: (req, res, callback = null) => {
+      const sql = `INSERT INTO USERS (nickName,userId,email,pwd) VALUES(${mysql.escape(
+        req.nickName
+      )},${mysql.escape(req.userId)},${mysql.escape(req.email)},${mysql.escape(
+        req.pwd
+      )});`
+      //console.log(sql)
+      const connection = init()
+      db_open(connection)
+      connection.query(sql, (error, result, fields) => {
+        callback(error, result) //콜백함수가 있을 경우 콜백함수에 result를 넣어 실행
+      })
+    },
+    removeUser: (req, res, callback = null) => {
+      const sql = `DELETE FROM USERS WHERE userId=${mysql.escape(req.userId)};`
       //console.log(sql)
       const connection = init()
       db_open(connection)

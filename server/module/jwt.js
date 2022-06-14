@@ -22,24 +22,23 @@ module.exports = {
   },
   verify: async (req, res, next) => {
     try {
-      console.log(req?.headers?.authorization)
-      req.decoded = jwt.verify(req?.headers?.authorization, secretKey)
+      console.log(req?.headers?.token)
+      req.decoded = jwt.verify(req?.headers?.token, secretKey)
       return next()
     } catch (err) {
       if (err.message === 'jwt expired') {
-        console.log('토큰 유효기간 초과')
-        return res
-          .status(419)
-          .json({ code: 419, message: '토큰이 만료되었습니다' })
-      } else if (err.message === 'invalid token') {
-        console.log('유효하지 않은 토큰')
         return res
           .status(401)
-          .json({ code: 401, message: '유효하지 않은 토큰입니다' })
-        return TOKEN_INVALID
+          .json({ success: false, code: 401, msg: '토큰이 만료되었습니다' })
+      } else if (err.message === 'invalid token') {
+        return res
+          .status(401)
+          .json({ success: false, code: 401, msg: '유효하지 않은 토큰입니다' })
       } else {
         console.log('invalid token')
-        return TOKEN_INVALID
+        return res
+          .status(419)
+          .json({ success: false, code: 419, msg: '잘못된 토큰입니다' })
       }
     }
   },
