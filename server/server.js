@@ -4,7 +4,7 @@ const testRouter = require('./routers/test')
 const authRouter = require('./routers/auth')
 const cors = require('cors')
 const passport = require('passport')
-const passportConfig = require('./passport')
+const passportConfig = require('./module/passport')
 
 app.use(cors())
 
