@@ -25,7 +25,7 @@ const db_open = con => {
 }
 module.exports = () => {
   return {
-    getAllUser: (res, req) => {
+    getAllUser: (req, res) => {
       const sql = `SELECT * FROM USERS;`
       const connection = init()
       db_open(connection)
@@ -33,7 +33,7 @@ module.exports = () => {
         res.send({ data: result })
       })
     },
-    getUserById: (req, res, callback = null) => {
+    getUserById: (req, res = null, callback = null) => {
       const sql = `SELECT * FROM USERS WHERE userId=${mysql.escape(
         req.userId
       )};`
@@ -41,10 +41,15 @@ module.exports = () => {
       const connection = init()
       db_open(connection)
       connection.query(sql, (error, result, fields) => {
-        callback(error, result[0]) //콜백함수가 있을 경우 콜백함수에 result를 넣어 실행
+        try {
+          callback(error, result[0]) //콜백함수가 있을 경우 콜백함수에 result를 넣어 실행
+        } catch (error) {
+          console.log(error)
+          return
+        }
       })
     },
-    addUser: (req, res, callback = null) => {
+    addUser: (req, res = null, callback = null) => {
       const sql = `INSERT INTO USERS (nickName,userId,email,pwd) VALUES(${mysql.escape(
         req.nickName
       )},${mysql.escape(req.userId)},${mysql.escape(req.email)},${mysql.escape(
@@ -57,7 +62,7 @@ module.exports = () => {
         callback(error, result) //콜백함수가 있을 경우 콜백함수에 result를 넣어 실행
       })
     },
-    removeUser: (req, res, callback = null) => {
+    removeUser: (req, res = null, callback = null) => {
       const sql = `DELETE FROM USERS WHERE userId=${mysql.escape(req.userId)};`
       //console.log(sql)
       const connection = init()

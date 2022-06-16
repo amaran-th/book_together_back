@@ -1,13 +1,17 @@
 const express = require('express')
 const app = express()
 const testRouter = require('./routers/test')
-const signRouter = require('./routers/sign')
+const authRouter = require('./routers/auth')
 const cors = require('cors')
+const passport = require('passport')
+const passportConfig = require('./passport')
 
 app.use(cors())
 
+app.use(passport.initialize())
+passportConfig()
 app.use('/test', testRouter)
-app.use('/sign', signRouter)
+app.use('/auth', authRouter)
 
 const port = 3002
 
