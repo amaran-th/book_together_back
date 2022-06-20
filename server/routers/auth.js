@@ -9,20 +9,25 @@ const jwt = require('../module/jwt')
 
 const check = user => {
   //TODO user 정보가 양식에 맞는지 확인하는 함수
-  return true
+  try {
+    const { userId, pwd, nickName, email, snsId, provider } = user
+    //
+  } catch (e) {
+    return false
+  }
 }
 
 //회원가입
 //TODO check()함수는 에러 유형에 따라 에러 객체를 반환하고 라우터 콜백함수는 그 에러를 catch하는 구조르 짠다.
 router.post('/signup', (req, res) => {
   if (check(req.query)) {
-    db.getUserById(req.query, res, async (error, result) => {
+    db.getUserByIdNProvider(req.query, res, async (error, result) => {
       if (!result || result?.length === 0) {
-        const { nickName, userId, email, pwd } = req.query
+        const { nickName, userId, email, pwd, snsId, provider } = req.query
         bcrypt.hash(pwd, 12, (err, encrypted) => {
           console.log(encrypted)
           db.addUser(
-            { nickName, userId, email, pwd: encrypted },
+            { nickName, userId, email, pwd: encrypted, snsId, provider },
             res,
             async (error, result) => {
               res.send({ success: true, msg: '유저 추가 완료' })
@@ -65,7 +70,7 @@ router.delete(
   }
 )
 
-//로그인
+//로컬 로그인
 router.post('/signin', (req, res, next) => {
   try {
     //아이디/비번 비교
@@ -94,7 +99,76 @@ router.post('/signin', (req, res, next) => {
   }
 })
 
-//인증 테스트용 로그아웃 api
+//카카오 연동 로그인
+router.get('/kakao', passport.authenticate('kakao-login'))
+router.get(
+  '/kakao/callback',
+  passport.authenticate('kakao-login', {
+    session: false,
+    failureRedirect: '/',
+  }),
+  async (req, res) => {
+    const { user } = req
+    const jwtToken = await jwt.sign(user.profile)
+    console.log(user.profile)
+    const querystring = require('querystring')
+    const query = querystring.stringify({
+      token: jwtToken.token,
+      userInfo: JSON.stringify(user.profile),
+    })
+
+    res.redirect(`http://localhost:3000/getToken?` + query)
+  }
+)
+
+//구글 연동 로그인
+router.get(
+  '/google',
+  passport.authenticate('google-login', { scope: ['email', 'profile'] })
+)
+router.get(
+  '/google/callback',
+  passport.authenticate('google-login', {
+    session: false,
+    failureRedirect: '/',
+  }),
+  async (req, res) => {
+    const { user } = req
+    const jwtToken = await jwt.sign(user.profile)
+    console.log(user.profile)
+    const querystring = require('querystring')
+    const query = querystring.stringify({
+      token: jwtToken.token,
+      userInfo: JSON.stringify(user.profile),
+    })
+
+    res.redirect(`http://localhost:3000/getToken?` + query)
+  }
+)
+//구글 연동 로그인
+router.get(
+  '/naver',
+  passport.authenticate('naver-login', { authType: 'reprompt' })
+)
+router.get(
+  '/naver/callback',
+  passport.authenticate('naver-login', {
+    session: false,
+    failureRedirect: '/',
+  }),
+  async (req, res) => {
+    const { user } = req
+    const jwtToken = await jwt.sign(user.profile)
+    console.log(user.profile)
+    const querystring = require('querystring')
+    const query = querystring.stringify({
+      token: jwtToken.token,
+      userInfo: JSON.stringify(user.profile),
+    })
+
+    res.redirect(`http://localhost:3000/getToken?` + query)
+  }
+)
 router.post(
   '/logout',
   passport.authenticate('jwt', { session: false }),

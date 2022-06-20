@@ -8,8 +8,8 @@ module.exports = {
   sign: async user => {
     const payload = {
       //token에 들어갈 실제 데이터(payload)
-      userId: user.userId,
-      pwd: user.pwd,
+      userId: user?.userId,
+      pwd: user?.pwd,
     }
     const result = {
       //sign 메소드를 통해 access token을 발급한다.
