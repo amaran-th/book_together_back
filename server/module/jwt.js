@@ -8,7 +8,7 @@ module.exports = {
   sign: async user => {
     const payload = {
       //token에 들어갈 실제 데이터(payload)
-      userId: user?.userId,
+      user_id: user?.user_id,
       pwd: user?.pwd,
     }
     const result = {

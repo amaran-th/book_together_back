@@ -11,11 +11,11 @@ const secretKey = require('../../config/secretkey').secretKey
 const db = require('../module/database')()
 
 //인증 관련(아이디/비번 비교)
-const passportConfig = { usernameField: 'userId', passwordField: 'pwd' }
-const passportVerify = async (userId, pwd, next) => {
+const passportConfig = { usernameField: 'user_id', passwordField: 'pwd' }
+const passportVerify = async (user_id, pwd, next) => {
   try {
     db.getUserByIdNProvider(
-      { userId, provider: 'local' },
+      { user_id, provider: 'local' },
       null,
       async (error, user) => {
         if (!user) {
@@ -49,7 +49,7 @@ const KakaoConfig = {
 const KakaoVerify = async (accessToken, refreshToken, profile, next) => {
   try {
     db.getUserBySnsId(
-      { snsId: profile.id, provider: profile.provider },
+      { sns_id: profile.id, provider: profile.provider },
       null,
       async (error, user) => {
         if (user) {
@@ -61,11 +61,11 @@ const KakaoVerify = async (accessToken, refreshToken, profile, next) => {
         } else {
           db.addSnsUser(
             {
-              nickName: profile.displayName,
-              userId: profile._json.kakao_account.email,
+              nick_name: profile.displayName,
+              user_id: profile._json.kakao_account.email,
               email: profile._json.kakao_account.email,
               pwd: null,
-              snsId: profile.id,
+              sns_id: profile.id,
               provider: 'kakao',
             },
             null,
@@ -96,7 +96,7 @@ const GoogleConfig = {
 const GoogleVerify = async (accessToken, refreshToken, profile, next) => {
   try {
     db.getUserBySnsId(
-      { snsId: profile.id, provider: profile.provider },
+      { sns_id: profile.id, provider: profile.provider },
       null,
       async (error, user) => {
         if (user) {
@@ -108,11 +108,11 @@ const GoogleVerify = async (accessToken, refreshToken, profile, next) => {
         } else {
           db.addSnsUser(
             {
-              nickName: profile.displayName,
-              userId: profile.emails[0].value,
+              nick_name: profile.displayName,
+              user_id: profile.emails[0].value,
               email: profile.emails[0].value,
               pwd: null,
-              snsId: profile.id,
+              sns_id: profile.id,
               provider: 'google',
             },
             null,
@@ -141,7 +141,7 @@ const NaverConfig = {
 const NaverVerify = async (accessToken, refreshToken, profile, next) => {
   try {
     db.getUserBySnsId(
-      { snsId: profile.id, provider: profile.provider },
+      { sns_id: profile.id, provider: profile.provider },
       null,
       async (error, user) => {
         if (user) {
@@ -153,11 +153,11 @@ const NaverVerify = async (accessToken, refreshToken, profile, next) => {
         } else {
           db.addSnsUser(
             {
-              nickName: profile.name,
-              userId: profile.email,
+              nick_name: profile.name,
+              user_id: profile.email,
               email: profile.email,
               pwd: null,
-              snsId: profile.id,
+              sns_id: profile.id,
               provider: 'naver',
             },
             null,
@@ -179,13 +179,13 @@ const NaverVerify = async (accessToken, refreshToken, profile, next) => {
 }
 //JWT 인증(verify) 관련
 const JWTConfig = {
-  jwtFromRequest: ExtractJwt.fromHeader('token'),
+  jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
   secretOrKey: secretKey,
 }
 const JWTVerify = async (jwtPayload, next) => {
   try {
     db.getUserByIdNProvider(
-      { userId: jwtPayload.userId, provider: 'local' },
+      { user_id: jwtPayload.user_id, provider: 'local' },
       null,
       async (error, user) => {
         if (user) {

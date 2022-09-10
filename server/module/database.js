@@ -34,8 +34,8 @@ module.exports = () => {
       })
     },
     getUserById: (req, res = null, callback = null) => {
-      const { userId } = req
-      const sql = `SELECT * FROM USERS WHERE userId=${mysql.escape(userId)};`
+      const { user_id } = req
+      const sql = `SELECT * FROM USERS WHERE user_id=${mysql.escape(user_id)};`
       console.log(sql)
       const connection = init()
       db_open(connection)
@@ -49,9 +49,9 @@ module.exports = () => {
       })
     },
     getUserByIdNProvider: (req, res = null, callback = null) => {
-      const { userId, provider } = req
-      const sql = `SELECT * FROM USERS WHERE userId=${mysql.escape(
-        userId
+      const { user_id, provider } = req
+      const sql = `SELECT * FROM USERS WHERE user_id=${mysql.escape(
+        user_id
       )} AND provider=${mysql.escape(provider)};`
       console.log(sql)
       const connection = init()
@@ -66,15 +66,16 @@ module.exports = () => {
       })
     },
     getUserBySnsId: (req, res = null, callback = null) => {
-      const { snsId, provider } = req
-      const sql = `SELECT * FROM USERS WHERE snsId=${mysql.escape(
-        snsId
+      const { sns_id, provider } = req
+      const sql = `SELECT * FROM USERS WHERE sns_id=${mysql.escape(
+        sns_id
       )} AND provider=${mysql.escape(provider)};`
       console.log(sql)
       const connection = init()
       db_open(connection)
       connection.query(sql, (error, result, fields) => {
         try {
+          console.log(result)
           callback(error, result[0]) //콜백함수가 있을 경우 콜백함수에 result를 넣어 실행
         } catch (error) {
           console.log(error)
@@ -83,12 +84,12 @@ module.exports = () => {
       })
     },
     addUser: (req, res = null, callback = null) => {
-      const { nickName, userId, email, pwd, snsId, provider } = req
-      const sql = `INSERT INTO USERS (nickName,userId,email,pwd,snsId,provider) VALUES(${mysql.escape(
-        nickName
-      )},${mysql.escape(userId)},${mysql.escape(email)},${mysql.escape(
-        pwd
-      )},${mysql.escape(snsId)},${mysql.escape(provider)});`
+      const { nick_name, user_id, email, pwd, sns_id, provider } = req
+      const sql = `INSERT INTO USERS (user_id,pwd,nick_name,email,about,sns_id,provider) VALUES(${mysql.escape(
+        user_id
+      )},${mysql.escape(pwd)},${mysql.escape(nick_name)},${mysql.escape(
+        email
+      )},'',${mysql.escape(sns_id)},${mysql.escape(provider)});`
       console.log(sql)
       const connection = init()
       db_open(connection)
@@ -97,22 +98,22 @@ module.exports = () => {
       })
     },
     addSnsUser: (req, res = null, callback = null) => {
-      const { nickName, userId, email, pwd, snsId, provider } = req
-      const sql = `INSERT INTO USERS (nickName,userId,email,pwd,snsId,provider) VALUES(${mysql.escape(
-        nickName
-      )},${mysql.escape(userId)},${mysql.escape(email)},${mysql.escape(
-        pwd
-      )},${mysql.escape(snsId)},${mysql.escape(provider)});`
+      const { nick_name, user_id, email, pwd, sns_id, provider } = req
+      const sql = `INSERT INTO USERS (user_id,pwd,nick_name,email,about,sns_id,provider) VALUES(${mysql.escape(
+        user_id
+      )},${mysql.escape(pwd)},${mysql.escape(nick_name)},${mysql.escape(
+        email
+      )},'',${mysql.escape(sns_id)},${mysql.escape(provider)});`
       console.log(sql)
       const connection = init()
       db_open(connection)
       connection.query(sql, (error, result, fields) => {
-        callback(error, { nickName, userId, email, pwd, snsId, provider }) //콜백함수가 있을 경우 콜백함수에 result를 넣어 실행
+        callback(error, { nick_name, user_id, email, pwd, sns_id, provider }) //콜백함수가 있을 경우 콜백함수에 result를 넣어 실행
       })
     },
     removeUser: (req, res = null, callback = null) => {
-      const { userId } = req
-      const sql = `DELETE FROM USERS WHERE userId=${mysql.escape(userId)};`
+      const { user_id } = req
+      const sql = `DELETE FROM USERS WHERE user_id=${mysql.escape(user_id)};`
       //console.log(sql)
       const connection = init()
       db_open(connection)
